@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>উমর ফারুক কবিতার এমসিকিউ - উল্টাপাল্টা </title>
+<style>
+  :root{--bg:#121212;--card:#1e1e1e;--muted:#f1f1f1;--topbar:#0f1720}
+  *{box-sizing:border-box}
+  body {
+    background-color: var(--bg);
+    color: var(--muted);
+    font-family: 'Noto Sans Bengali', sans-serif;
+    margin: 0;
+    padding: 80px 20px 40px 20px; /* leave space for fixed topbar */
+  }
+  .topbar{
+    position:fixed;left:0;right:0;top:0;height:64px;background:var(--topbar);display:flex;align-items:center;justify-content:space-between;padding:0 16px;box-shadow:0 2px 6px rgba(0,0,0,0.5);z-index:1000
+  }
+  .logo{font-weight:700;font-size:18px}
+  .controls{display:flex;gap:8px;align-items:center}
+  button{font:inherit}
+  h2 {
+    border-bottom: 2px solid #333;
+    padding-bottom: 8px;
+    margin-top: 24px;
+  }
+  .mcq {
+    margin-bottom: 18px;
+    padding:12px;border-radius:8px;background:transparent
+  }
+  .mcq p{margin:0 0 10px 0}
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .options button {
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--card);
+    color: var(--muted);
+    cursor: pointer;
+    transition: transform .12s ease, box-shadow .12s ease;
+    text-align:left;
+  }
+  .options button:active{transform:scale(.997)}
+  .options button.correct {
+    background: linear-gradient(180deg,#e6ffe9,#bff6c4);
+    color:#061006;
+    box-shadow:0 4px 10px rgba(120,200,150,0.12);
+  }
+  .options button.wrong {
+    background: linear-gradient(180deg,#ffecec,#f7bcbc);
+    color:#2a0a0a;
+    box-shadow:0 4px 10px rgba(240,120,120,0.12);
+  }
+  .top-toggle{background:#263238;color:#fff;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+  .section-note{opacity:.8;font-size:13px;margin-bottom:8px}
+  @media (max-width:700px){
+    .options{grid-template-columns:1fr}
+    body{padding:100px 12px 20px}
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <h1 class="logo">উল্টাপাল্টা</h1>
+    <div class="controls">
+      <button id="toggleAnswers" class="top-toggle">উত্তর দেখাও</button>
+    </div>
+  </div>
+
+  <h2>কাজী নজরুল ইসলাম সম্পর্কিত এমসিকিউ</h2>
+  <div class="section-note">প্রশ্নের বাটনগুলো স্পর্শ/ক্লিক করলে সঠিক হলে হালকা সবুজ, ভুল হলে হালকা লাল হবে।</div>
+  <div id="nazrul-section"></div>
+
+  <h2>উমর ফারুক কবিতা সম্পর্কিত এমসিকিউ</h2>
+  <div class="section-note">প্রয়োজনে সহজে প্রশ্ন/উত্তর বদলাতে স্ক্রিপ্টের মেসেজ অ্যারে সম্পাদনা করুন।</div>
+  <div id="umar-section"></div>
+
+<script>
+const nazrulMCQs = [
+  {q: '১. কাজী নজরুল ইসলাম কোথায় জন্মগ্রহণ করেন?', options: ['ক. কলকাতা', 'খ. ত্রিশাল', 'গ. চুরুলিয়া', 'ঘ. আসানসোল'], answer: 2},
+  {q: '২. কাজী নজরুল ইসলাম বাংলা কোন তারিখে জন্মগ্রহণ করেন?', options: ['ক. ১১ই জ্যৈষ্ঠ ১৩০৬', 'খ. ১২ই বৈশাখ ১৩০৭', 'গ. ১লা আষাঢ় ১৩০৫', 'ঘ. ১৪ই ফাল্গুন ১৩০৬'], answer: 0},
+  {q: '৩. নজরুল শৈশবে কোন ধরনের গানের দলে যোগ দেন?', options: ['ক. পল্লীগীতি', 'খ. লেটো গান', 'গ. বাউল গান', 'ঘ. খেয়াল গান'], answer: 1},
+  {q: '৪. নজরুল কোন সেনাবাহিনীতে যোগ দেন?', options: ['ক. ভারতীয় ব্রিটিশ নৌবাহিনী', 'খ. রাজপুতানা সেনা', 'গ. বাঙালি পল্টন', 'ঘ. দিল্লি রেজিমেন্ট'], answer: 2},
+  {q: '৫. নজরুলের সাহিত্য-জীবনের সূচনা কোথায় হয়েছিল?', options: ['ক. কলকাতায়', 'খ. আসানসোলে', 'গ. ময়মনসিংহে', 'ঘ. করাচিতে'], answer: 3},
+  {q: '৬. নজরুলকে ‘বিদ্রোহী কবি’ বলা হয় কেন?', options: ['ক. গান লেখার কারণে', 'খ. গল্প লেখার কারণে', 'গ. পরাধীনতা ও সামাজিক অন্যায়ের বিরুদ্ধে লেখার কারণে', 'ঘ. কবিতা পাঠের কারণে'], answer: 2},
+  {q: '৭. নজরুল কোন ধরনের গানে খ্যাতি অর্জন করেন?', options: ['ক. বাউল', 'খ. রবীন্দ্রসঙ্গীত', 'গ. গজল, খেয়াল, রাগপ্রধান', 'ঘ. ধ্রুপদী'], answer: 2},
+  {q: '৮. নজরুল কত বছর বয়সে বাকশক্তি হারান?', options: ['ক. ৪০ বছর', 'খ. ৪৫ বছর', 'গ. ৪৩ বছর', 'ঘ. ৫০ বছর'], answer: 2},
+  {q: '৯. বাংলাদেশে কাজী নজরুল ইসলামকে কী কোন মর্যাদা দেওয়া হয়?', options: ['ক. জাতীয় সংগীতের রচয়িতা', 'খ. জাতীয় কবি', 'গ. সাহিত্যের জনক', 'ঘ. গণকণ্ঠ শিল্পী'], answer: 1},
+  {q: '১০. কাজী নজরুল ইসলামের মৃত্যু হয় কোথায়?', options: ['ক. কলকাতায়', 'খ. ময়মনসিংহে', 'গ. বঙ্গবন্ধু শেখ মুজিব মেডিক্যাল বিশ্ববিদ্যালয়', 'ঘ. ঢাকা মেডিকেল কলেজ'], answer: 2}
+];
+
+const umarMCQs = [
+  {q:'১. ‘উমর ফারুক’ কবিতার রচয়িতা কে?', options:['ক. আলাওল','খ. কাজী নজরুল ইসলাম','গ. গোলাম মোস্তফা','ঘ. মীর মশাররফ হোসেন'], answer:1},
+  {q:'২. ‘উমর ফারুক’ কবিতা কোন কাব্যগ্রন্থ থেকে নেওয়া হয়েছে?', options:['ক. অগ্নিবীণা','খ. বিষের বাঁশি','গ. জিঞ্জীর','ঘ. সিন্ধু হিন্দোল'], answer:2},
+  {q:'৩. ‘উমর ফারুক’ কবিতায় কাকে স্মরণ করা হয়েছে?', options:['ক. আবু বকর','খ. হজরত উমর (রা.)','গ. হজরত আলী (রা.)','ঘ. হজরত ওসমান (রা.)'], answer:1},
+  {q:'৪. ‘আমির-উল-মুমেনিন’ অর্থ কী?', options:['ক. মসজিদের ইমাম','খ. খলিফার পুত্র','গ. মুসলমানদের নেতা','ঘ. বীর সেনাপতি'], answer:2},
+  {q:'৫. ‘উমর ফারুক’ কবিতায় উমর (রা.)-কে রাসুল (স.) কিসের তুলনা দিয়েছেন?', options:['ক. পরশমানিক','খ. শেষ নবির উত্তরসূরি','গ. সাহাবা','ঘ. মুয়াজ্জিন'], answer:1},
+  {q:'৬. খলিফা উমর (রা.) কেমন জীবন যাপন করতেন?', options:['ক. বিলাসবহুল','খ. গোপন','গ. অনাড়ম্বর ও সরল','ঘ. রাজকীয়'], answer:2},
+  {q:'৭. খলিফা উমর (রা.) কতখানি ন্যায়পরায়ণ ছিলেন?', options:['ক. অপরের জন্য কঠোর','খ. নিজের সন্তানকে শাস্তি দিতেও দ্বিধাহীন','গ. সর্বদা ক্ষমাশীল','ঘ. নিরপেক্ষ না'], answer:1},
+  {q:'৮. কবিতায় ‘শমশের’ শব্দটি কোন অর্থে ব্যবহৃত হয়েছে?', options:['ক. তরবারি','খ. আলো','গ. কণ্ঠস্বর','ঘ. বাণী'], answer:0},
+  {q:'৯. ‘পরশে তাহার সোনা হল যারা’—এখানে ‘তাহার’ দ্বারা বোঝানো হয়েছে?', options:['ক. ইসলাম ধর্ম','খ. খলিফা উমর','গ. খলিফা','ঘ. আল্লাহ'], answer:0},
+  {q:'১০. উমর (রা.) কোন শহরে একা উট চালিয়ে গিয়েছিলেন?', options:['ক. মদিনা','খ. মক্কা','গ. জেরুজালেম','ঘ. দামেস্ক'], answer:2},
+  {q:'১১. উমর (রা.) উটের পিঠে বসতে কাকে বলেছিলেন?', options:['ক. সেনাপতি','খ. তাঁর পুত্র','গ. ভৃত্য','ঘ. একজন দরিদ্র'], answer:2},
+  {q:'১২. উমর (রা.) কেন উটের রশি ধরেন?', options:['ক. উটের নিয়ন্ত্রণের জন্য','খ. ভৃত্য ক্লান্ত ছিল','গ. সাহারা পার হওয়ার জন্য','ঘ. লোক দেখানোর জন্য'], answer:1},
+  {q:'১৩. ‘মানুষ হইয়া মানুষের পূজা’—এখানে কবি কী বোঝাতে চেয়েছেন?', options:['ক. শ্রদ্ধা','খ. অপমান','গ. ভালোবাসা','ঘ. উপাসনা'], answer:1},
+  {q:'১৪. উমর (রা.) কীভাবে মানুষের সমতা প্রতিষ্ঠা করেন?', options:['ক. ধর্মের মাধ্যমে','খ. সামরিক শাসনে','গ. ন্যায়বিচার ও দৃষ্টান্ত স্থাপন করে','ঘ. অর্থ প্রদান করে'], answer:2},
+  {q:'১৫. ক্ষুধার্ত শিশুদের জন্য উমর (রা.) কী করলেন?', options:['ক. তাদের ত্যাগ করেন','খ. খাদ্য দিয়ে আসেন','গ. লোক পাঠান','ঘ. সেনা পাঠান'], answer:1},
+  {q:'১৬. উমর (রা.) কীভাবে খাদ্য বহন করেন আনেন?', options:['ক. উটের পিঠে চাপিয়ে','খ. গাড়িতে করে','গ. নিজের পিঠে করে','ঘ. ভৃত্তের মাথায় করে'], answer:2},
+  {q:'১৭. খলিফা উমর (রা.) নিজের পুত্রকে কী কারণে শাস্তি দেন?', options:['ক. চুরি করায়','খ. অন্যায় কথা বলায়','গ. মদ্যপানে','ঘ. ভৃত্যকে মারায়'], answer:2},
+  {q:'১৮. সাহারা পার হওয়ার সময় কোন দুটি জিনিস খলিফা উমর সঙ্গে নেন?', options:['ক. মশক ও খেজুর','খ. রুটি ও পানি','গ. ছাতা ও লণ্ঠন','ঘ. রুটি ও খোমা'], answer:3},
+  {q:'১৯. কবি উমর (রা.)-কে কী উপাধিতে অভিহিত করেছেন?', options:['ক. বীরপুরুষ','খ. আলোকবর্তিকা','গ. মহৎপ্রাণ','ঘ. মহান সেনাপতি'], answer:2},
+  {q:'২০. ‘সাইমুম-ঝড়’ বলতে কী বোঝায়?', options:['ক. সমুদ্রের ঝড়','খ. মরু অঞ্চলের ধুলিঝড়','গ. মেঘনার ঢেউ','ঘ. উটের শব্দ'], answer:1},
+  {q:'২১. ‘ফিরদৌস’ শব্দের অর্থ কী?', options:['ক. রাজপ্রাসাদ','খ. মদিনা','গ. জান্নাত','ঘ. মরুভূমি'], answer:2},
+  {q:'২২. ‘উমর ফারুক’ কবিতায় কোন নামাজের আজান দেওয়া হয়েছে?', options:['ক. ফজর','খ. মাগরিব','গ. আসর','ঘ. এশা'], answer:3},
+  {q:'২৩. ‘খলিফাতুল মুসলেমিন’ অর্থ কী?', options:['ক. মুসলিমদের নেতা','খ. মুসলিমদের সম্রাট','গ. মুসলিমদের বন্ধু','ঘ. মুসলিমদের ভাই'], answer:0},
+  {q:'২৪. ‘উমর ফারুক’ কবিতার ভাষাশৈলীতে কোন শব্দগুচ্ছ অধিক ব্যবহৃত হয়েছে?', options:['ক. সংস্কৃত','খ. আরবি-ফারসি','গ. হিন্দি','ঘ. পালি'], answer:1},
+  {q:'২৫. ‘ঊর্ধ্বের যারা পড়েছে তাহারা’—এখানে ‘ঊর্ধ্ব’ বলতে বোঝানো হয়েছে?', options:['ক. ওপরের মহল','খ. রাজপ্রাসাদ','গ. আত্মগর্ব','ঘ. মেঘলা আকাশ'], answer:2},
+  {q:'২৬. উমর (রা.) কার কথা শুনে মদিনা থেকে খাদ্য বহন করেন?', options:['ক. মুয়াজ্জিন','খ. ক্ষুধার্ত শিশুদের মায়ের কান্না','গ. রাসুল (স.)','ঘ. ভৃত্যের আহ্বান'], answer:1},
+  {q:'২৭. ‘একটি মাত্র পিরান কাচিয়া শুকায়নি তাহা বলে,\nরোদ্রে ধরিয়া বসিয়া আছে গো খলিফা আঙিনা-তলে । ’—এটি কার দৃষ্টান্ত?', options:['ক. উমর (রা.)','খ. উমরের ভৃত্য','গ. কবি নিজে','ঘ. শিশুর পিতা'], answer:0},
+  {q:'২৮. খলিফা উমর (রা.) কিসে বসতেন বলে কবিতায় উল্লেখ আছে?', options:['ক. মসনদে','খ. খেজুর পাতার প্রাসাদে','গ. সিংহাসনে','ঘ. কাঠের চৌকিতে'], answer:1},
+  {q:'২৯. ‘মানুষ হইয়া মানুষের সেবা’—এটি কার নীতি?', options:['ক. রাসুল (স.)','খ. কবি','গ. উমর (রা.)','ঘ. সাহাবা'], answer:2},
+  {q:'৩০. ‘উমর ফারুক’ কবিতায় কবি উমর (রা.)-কে কোন দৃষ্টান্ত হিসেবে তুলে ধরেছেন?', options:['ক. সাহসিকতার','খ. প্রজ্ঞার','গ. দানশীলতার','ঘ. আদর্শ মানব চরিত্রের'], answer:3}
+];
+
+function makeOptionButton(text){
+  const btn=document.createElement('button');
+  btn.textContent=text;return btn;
+}
+
+function renderMCQs(mcqs, containerId){
+  const container=document.getElementById(containerId);
+  container.innerHTML='';
+  mcqs.forEach((mcq, i)=>{
+    const div=document.createElement('div');div.className='mcq';
+    const q=document.createElement('p');q.textContent=mcq.q;div.appendChild(q);
+    const opts=document.createElement('div');opts.className='options';
+    mcq.options.forEach((opt, idx)=>{
+      const btn=makeOptionButton(opt);
+      btn.addEventListener('click',()=>{
+        // clear previous state for this question
+        mcq.optionsButtons.forEach(b=>b.classList.remove('correct','wrong'));
+        if(idx===mcq.answer) btn.classList.add('correct'); else btn.classList.add('wrong');
+      });
+      opts.appendChild(btn);
+    });
+    div.appendChild(opts);
+    container.appendChild(div);
+    // store references for later
+    mcq.optionsButtons = Array.from(opts.querySelectorAll('button'));
+  });
+}
+
+renderMCQs(nazrulMCQs,'nazrul-section');
+renderMCQs(umarMCQs,'umar-section');
+
+let answersShown=false;
+const toggle=document.getElementById('toggleAnswers');
+function setShowAnswers(show){
+  answersShown=show;toggle.textContent=show? 'উত্তর লুকাও':'উত্তর দেখাও';
+  // reveal correct for all questions
+  [...nazrulMCQs,...umarMCQs].forEach(q=>{
+    q.optionsButtons.forEach(b=>b.classList.remove('correct','wrong'));
+    if(show) q.optionsButtons[q.answer].classList.add('correct');
+  });
+}
+
+toggle.addEventListener('click',()=>setShowAnswers(!answersShown));
+
+// expose arrays for easy editing in console if needed
+window.NAZRUL=nazrulMCQs;window.UMAR=umarMCQs;
+</script>
+</body>
+</html>
