@@ -74,11 +74,16 @@
 
         /* Custom style to ensure minimum height for centering when no video is loaded */
         #videoContainer {
-            min-height: 400px; /* Ensures vertical space for centering */
+            min-height: 400px; /* Default height for initial message (IMPORTANT) */
             position: relative;
             flex-grow: 1; 
             min-width: 1500px;
             background-color: #1a1a1a; /* Dark video section background */
+        }
+        
+        /* CRITICAL FIX: Reset min-height when the video is loaded to allow aspect ratio to work */
+        #videoContainer.has-video {
+            min-height: 0 !important; 
         }
 
         /* Topbar Hiding Fix: Changed from sticky to fixed for reliable transition */
@@ -481,19 +486,28 @@
                         ⚠️ Invalid YouTube URL. Please check the link format.
                     </p>
                 `;
+                // Ensure has-video class is removed on error
+                videoContainer.classList.remove('has-video');
+                // Re-add centering classes on error
+                videoContainer.classList.add('flex', 'items-center', 'justify-center');
                 return;
             }
 
-            const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+            // Updated embed URL with stabilizing parameters
+            const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&iv_load_policy=3&enablejsapi=1`;
+
+            // 1. Remove the flex centering classes for the initial message
+            videoContainer.classList.remove('flex', 'items-center', 'justify-center');
+            
+            // 2. CRITICAL FIX: Add the class to remove the 400px min-height, 
+            // allowing the 16:9 aspect ratio to correctly define the height.
+            videoContainer.classList.add('has-video');
 
             // 3. Save the successfully loaded URL to Firestore
             if (window.saveCurrentUrl) {
                  window.saveCurrentUrl(finalUrl);
             }
 
-            // Remove the flex centering classes for the initial message and replace with the video content
-            videoContainer.classList.remove('flex', 'items-center', 'justify-center');
-            
             // Create the responsive iframe HTML
             videoContainer.innerHTML = `
                 <div class="video-container rounded-lg">
@@ -503,7 +517,7 @@
                         frameborder="0" 
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                         allowfullscreen
-                        class="rounded-lg shadow-2xl z-10"
+                        class="rounded-lg shadow-2xl z-[100]" <!-- High Z-Index to prevent layering conflicts -->
                     ></iframe>
                 </div>
             `;
