@@ -39,6 +39,10 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+        /* Custom style to ensure minimum height for centering when no video is loaded */
+        #videoContainer {
+            min-height: 400px; /* Ensures vertical space for centering */
+        }
     </style>
     <script>
         tailwind.config = {
@@ -103,14 +107,12 @@
         </button>
     </header>
 
-    <!-- Main Content Area: Removed max-width constraints and using full width with padding -->
+    <!-- Main Content Area: Using full width with padding -->
     <main class="w-full px-4 md:px-8 py-4 md:py-8">
         
-        <!-- REMOVED: <h1>Distraction-Free Focus Zone</h1> -->
-
-        <!-- Video Display Container -->
-        <div id="videoContainer" class="bg-yt-dark rounded-xl shadow-2xl p-4 transition-all duration-300">
-            <p id="initialMessage" class="text-center text-gray-500 py-32 text-lg">
+        <!-- Video Display Container: Added flex classes for centering -->
+        <div id="videoContainer" class="bg-yt-dark rounded-xl shadow-2xl p-4 transition-all duration-300 flex items-center justify-center">
+            <p id="initialMessage" class="text-center text-gray-500 text-lg">
                 Paste a YouTube URL in the bar above and click "Watch" to begin your focused session.
             </p>
         </div>
@@ -235,6 +237,9 @@
             // rel=0 prevents related videos, modestbranding=1 minimizes branding.
             const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
 
+            // Remove the flex centering classes for the initial message and replace with the video content
+            videoContainer.classList.remove('flex', 'items-center', 'justify-center');
+            
             // Create the responsive iframe HTML
             videoContainer.innerHTML = `
                 <div class="video-container rounded-lg">
