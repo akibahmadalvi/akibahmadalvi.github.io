@@ -41,21 +41,32 @@
             background: #27272a;
         }
         
-        /* Apply Inter font and padding for fixed header */
+        /* Apply Inter font and layout adjustments */
         body {
             font-family: 'Inter', sans-serif;
-            padding-top: 60px; /* Space for the 60px height fixed header */
-            transition: padding-top 0.3s ease-in-out;
             overflow-x: hidden; /* Ensures no horizontal scroll */
         }
-        body.focus-mode-active {
-            padding-top: 0; /* Remove padding when header is hidden */
+        
+        /* Main Content Container Sizing and Transition */
+        #mainContent {
+            margin-top: 60px; /* Space for the 60px height fixed header */
+            transition: margin-top 0.3s ease-in-out;
+            min-height: calc(100vh - 60px); /* Initial height minus topbar height */
+            display: flex; /* Added flex to center initial message */
+            flex-direction: column;
         }
         
+        #mainContent.focus-mode-active {
+            margin-top: 0; /* No space needed when topbar hides */
+            min-height: 100vh;
+        }
+
         /* Custom style to ensure minimum height for centering when no video is loaded */
         #videoContainer {
             min-height: 400px; /* Ensures vertical space for centering */
             position: relative;
+            /* Flex properties needed for initial message centering */
+            flex-grow: 1; 
         }
 
         /* Topbar Hiding Fix: Changed from sticky to fixed for reliable transition */
@@ -181,8 +192,8 @@
         </button>
     </header>
 
-    <!-- Main Content Area: Now full width, removing max-width wrapper -->
-    <main class="w-full px-4 md:px-8 py-4 md:py-8">
+    <!-- Main Content Area: Now controls its own height via CSS -->
+    <main id="mainContent" class="w-full px-4 md:px-8 py-4 md:py-8 justify-center items-center">
         
         <!-- Video Display Container: Now occupies full width of main's padding -->
         <div id="videoContainer" class="bg-yt-dark rounded-xl shadow-2xl p-4 transition-all duration-300 flex items-center justify-center relative">
@@ -205,6 +216,7 @@
     <!-- JavaScript for Functionality and Timer -->
     <script>
         const topbar = document.getElementById('topbar');
+        const mainContent = document.getElementById('mainContent'); // Reference to main tag
         const mainControls = document.getElementById('mainControls');
         const menuToggleButtonTop = document.getElementById('menuToggleButtonTop');
         const timerGroupWrapper = document.getElementById('timerGroupWrapper');
@@ -293,9 +305,9 @@
             if (isFocusMode) {
                 // ENTER FOCUS MODE (Hide controls, move timer/hamburger)
                 
-                // 1. Hide Topbar and adjust body padding
+                // 1. Hide Topbar and adjust main content margin/height
                 topbar.classList.add('hidden-topbar');
-                document.body.classList.add('focus-mode-active');
+                mainContent.classList.add('focus-mode-active');
                 
                 // 2. Prepare floating controls and move content
                 floatingControls.style.display = 'flex'; // Make the flex container visible
@@ -319,9 +331,9 @@
                     // Hide floating controls container completely
                     floatingControls.style.display = 'none';
 
-                    // Restore Topbar and padding
+                    // Restore Topbar and main content margin/height
                     topbar.classList.remove('hidden-topbar');
-                    document.body.classList.remove('focus-mode-active');
+                    mainContent.classList.remove('focus-mode-active');
                     
                     // Reset sub-menu visibility
                     floatingControls.classList.remove('hidden-sub-menu');
