@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Code Viewer</title>
+    <style>
+        /* CSS for Basic Styling */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+        }
+
+        /* Top Bar Styling */
+        .topbar {
+            background-color: #333;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: sticky; /* Makes it stick to the top */
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* Input Field Styling */
+        #codeInput {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-right: 10px;
+            background-color: #444;
+            color: #fff;
+        }
+
+        /* Button Styling */
+        #viewCodeButton {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        #viewCodeButton:hover {
+            background-color: #0056b3;
+        }
+
+        /* Main Display Area Styling */
+        .code-display {
+            padding: 20px;
+            min-height: 500px; /* Ensure there is visible space */
+        }
+
+        /* Code Block Styling */
+        .code-output {
+            background-color: #282c34; /* Dark background typical for code */
+            color: #abb2bf; /* Light text color */
+            padding: 15px;
+            border-radius: 6px;
+            white-space: pre-wrap; /* Preserve formatting and wrap text */
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="topbar">
+        <input type="text" id="codeInput" placeholder="Paste your HTML, text, or short code snippet here...">
+        <button id="viewCodeButton">View Code Below</button>
+    </div>
+    
+    <div class="code-display">
+        <h3>Code Output:</h3>
+        <pre id="outputArea" class="code-output">The displayed code will appear here after clicking the button.</pre>
+    </div>
+
+    <script>
+        // Function to run when the button is clicked
+        function displayCode() {
+            // Get the value from the input bar
+            const inputElement = document.getElementById('codeInput');
+            const code = inputElement.value;
+            
+            // Get the output area element
+            const outputElement = document.getElementById('outputArea');
+            
+            // Set the content of the output area to the input code
+            // The <pre> tag handles preserving the whitespace/formatting
+            outputElement.textContent = code;
+
+            // Optional: Clear the input field after placing the code
+            inputElement.value = '';
+        }
+
+        // Get the button element
+        const button = document.getElementById('viewCodeButton');
+        
+        // Attach the displayCode function to the button's click event
+        button.addEventListener('click', displayCode);
+    </script>
+
+</body>
+</html>
