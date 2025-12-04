@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Code Viewer</title>
+    <title>HTML Renderer</title>
     <style>
         /* CSS for Basic Styling */
         body {
@@ -19,7 +19,7 @@
             display: flex;
             align-items: center;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            position: sticky; /* Makes it stick to the top */
+            position: sticky;
             top: 0;
             z-index: 1000;
         }
@@ -39,7 +39,7 @@
         /* Button Styling */
         #viewCodeButton {
             padding: 10px 20px;
-            background-color: #007bff;
+            background-color: #28a745; /* Green for Render/Output */
             color: white;
             border: none;
             border-radius: 4px;
@@ -49,63 +49,59 @@
         }
 
         #viewCodeButton:hover {
-            background-color: #0056b3;
+            background-color: #1e7e34;
         }
 
         /* Main Display Area Styling */
         .code-display {
             padding: 20px;
-            min-height: 500px; /* Ensure there is visible space */
+            background-color: white; /* Use a white background to simulate a webpage */
+            border: 1px solid #ddd;
+            margin: 20px;
+            min-height: 500px;
         }
 
-        /* Code Block Styling */
-        .code-output {
-            background-color: #282c34; /* Dark background typical for code */
-            color: #abb2bf; /* Light text color */
-            padding: 15px;
-            border-radius: 6px;
-            white-space: pre-wrap; /* Preserve formatting and wrap text */
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 14px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        .code-display h3 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-top: 0;
+            color: #555;
         }
     </style>
 </head>
 <body>
 
     <div class="topbar">
-        <input type="text" id="codeInput" placeholder="Paste your HTML, text, or short code snippet here...">
-        <button id="viewCodeButton">View Code Below</button>
+        <input type="text" id="codeInput" placeholder="Paste your HTML snippet (e.g., <h1 style='color:red;'>Hello!</h1>)">
+        <button id="viewCodeButton">Render HTML Output</button>
     </div>
     
     <div class="code-display">
-        <h3>Code Output:</h3>
-        <pre id="outputArea" class="code-output">The displayed code will appear here after clicking the button.</pre>
+        <h3>Rendered Output:</h3>
+        <div id="outputArea">
+            <p>The **rendered output** (what the user sees) will appear here after clicking the button. Try pasting an H1 tag!</p>
+        </div>
     </div>
 
     <script>
         // Function to run when the button is clicked
         function displayCode() {
             // Get the value from the input bar
-            const inputElement = document.getElementById('codeInput');
-            const code = inputElement.value;
+            const code = document.getElementById('codeInput').value;
             
             // Get the output area element
             const outputElement = document.getElementById('outputArea');
             
-            // Set the content of the output area to the input code
-            // The <pre> tag handles preserving the whitespace/formatting
-            outputElement.textContent = code;
+            // *** CRUCIAL CHANGE: Use innerHTML ***
+            // This tells the browser to interpret the string as live HTML content.
+            outputElement.innerHTML = code;
 
             // Optional: Clear the input field after placing the code
-            inputElement.value = '';
+            document.getElementById('codeInput').value = '';
         }
 
-        // Get the button element
-        const button = document.getElementById('viewCodeButton');
-        
         // Attach the displayCode function to the button's click event
-        button.addEventListener('click', displayCode);
+        document.getElementById('viewCodeButton').addEventListener('click', displayCode);
     </script>
 
 </body>
