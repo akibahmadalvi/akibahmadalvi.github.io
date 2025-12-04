@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Updated Title -->
-    <title>FocusFrame</title>
+    <title>Stream</title>
+    <!-- Favicon: Simple White Clock Icon SVG -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>
+    <circle cx='12' cy='12' r='10'/>
+    <polyline points='12 6 12 12 16 14'/>
+</svg>">
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -35,13 +41,68 @@
             background: #27272a;
         }
         
-        /* Apply Inter font */
+        /* Apply Inter font and padding for fixed header */
         body {
             font-family: 'Inter', sans-serif;
+            padding-top: 60px; /* Space for the 60px height fixed header */
+            transition: padding-top 0.3s ease-in-out;
         }
+        body.focus-mode-active {
+            padding-top: 0; /* Remove padding when header is hidden */
+        }
+        
         /* Custom style to ensure minimum height for centering when no video is loaded */
         #videoContainer {
             min-height: 400px; /* Ensures vertical space for centering */
+            position: relative;
+        }
+
+        /* Topbar Hiding Fix: Changed from sticky to fixed for reliable transition */
+        #topbar {
+            position: fixed; /* Use fixed for reliable hiding transition */
+            top: 0;
+            left: 0;
+            right: 0;
+            transition: transform 0.3s ease-in-out; /* Smooth transition (0.3s) for hiding/showing */
+        }
+        
+        /* State when Topbar is Hidden (Focus Mode) */
+        #topbar.hidden-topbar {
+            transform: translateY(-100%); /* Move 100% upwards to hide it */
+        }
+
+        /* Floating Controls Container Style */
+        .floating-controls-style {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+            /* Semi-transparent background with blur */
+            background-color: rgba(0, 0, 0, 0.7); 
+            padding: 8px 12px;
+            border-radius: 9999px;
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            display: flex; 
+            align-items: center;
+            gap: 8px; 
+        }
+        
+        /* Class for sliding the main floating container (when exiting focus mode) */
+        .hiding-floating {
+            transform: translateX(300px); /* Slide off screen to the right */
+            opacity: 0;
+        }
+        
+        /* Sub-Menu Toggle Styles: Hide/Slide the Floating Hamburger */
+        #floatingMenuToggleButton {
+             transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        #floatingControls.hidden-sub-menu #floatingMenuToggleButton {
+            transform: translateX(100px); /* Slide it out */
+            opacity: 0;
+            pointer-events: none; /* Disable clicks when hidden */
         }
     </style>
     <script>
@@ -61,13 +122,29 @@
 </head>
 <body class="bg-gray-900 text-gray-200">
 
-    <!-- Top Bar (Sticky, YouTube-like Dark Style) -->
-    <header class="topbar bg-yt-bar shadow-lg sticky top-0 z-50 p-3 flex justify-center space-x-4">
+    <!-- Top Bar (Fixed, YouTube-like Dark Style) -->
+    <header id="topbar" class="bg-yt-bar shadow-lg z-50 p-3 flex justify-between items-center space-x-4">
         
-        <!-- Timer Display Group with Control Button -->
-        <div class="flex items-center space-x-1">
+        <!-- Main Controls (Input and Watch Button - HIDABLE) -->
+        <div id="mainControls" class="flex flex-grow justify-center items-center space-x-4">
+            <!-- URL Input Field: max-w-xl changed to max-w-md for smaller length -->
+            <input 
+                type="text" 
+                id="urlInput" 
+                placeholder="Paste YouTube Video Link here (e.g., https://youtu.be/dQw4w9WgXcQ)"
+                class="flex-grow max-w-md bg-gray-800 text-white border border-gray-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-full px-5 py-2 text-sm shadow-md transition duration-200"
+            >
+            
+            <!-- Button -->
+            <button id="loadButton" class="bg-primary hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-full shadow-lg transition duration-200 transform hover:scale-105">
+                Watch
+            </button>
+        </div>
+        
+        <!-- Timer Display Group and Control Button (Hidden/Moved) -->
+        <div id="timerGroupWrapper" class="flex items-center space-x-1 cursor-pointer">
             <!-- Timer Display (Minimal and prominent - py-2 added for alignment) -->
-            <div class="flex items-center space-x-2 text-sm md:text-base bg-gray-700 px-4 py-2 rounded-full shadow-inner">
+            <div id="timerDisplayContainer" class="flex items-center space-x-2 text-sm md:text-base bg-gray-700 px-4 py-2 rounded-full shadow-inner">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l3 3a1 1 0 001.414-1.414L11 9.586V6z" clip-rule="evenodd" />
                 </svg>
@@ -91,19 +168,15 @@
                 </span>
             </button>
         </div>
-
-
-        <!-- URL Input Field: max-w-xl changed to max-w-md for smaller length -->
-        <input 
-            type="text" 
-            id="urlInput" 
-            placeholder="Paste YouTube Video Link here (e.g., https://youtu.be/dQw4w9WgXcQ)"
-            class="flex-grow max-w-md bg-gray-800 text-white border border-gray-600 focus:border-primary focus:ring-1 focus:ring-primary rounded-full px-5 py-2 text-sm shadow-md transition duration-200"
-        >
         
-        <!-- Button -->
-        <button id="loadButton" class="bg-primary hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-full shadow-lg transition duration-200 transform hover:scale-105">
-            Watch
+        <!-- Hamburger Icon (Stays here to balance layout) -->
+        <button id="menuToggleButtonTop" class="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-full shadow-lg transition duration-200" title="Toggle Focus Mode">
+            <!-- Hamburger Icon SVG (Lucide Menu) -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu">
+                <line x1="4" x2="20" y1="12" y2="12"/>
+                <line x1="4" x2="20" y1="6" y2="6"/>
+                <line x1="4" x2="20" y1="18" y2="18"/>
+            </svg>
         </button>
     </header>
 
@@ -111,7 +184,13 @@
     <main class="w-full px-4 md:px-8 py-4 md:py-8">
         
         <!-- Video Display Container: Added flex classes for centering -->
-        <div id="videoContainer" class="bg-yt-dark rounded-xl shadow-2xl p-4 transition-all duration-300 flex items-center justify-center">
+        <div id="videoContainer" class="bg-yt-dark rounded-xl shadow-2xl p-4 transition-all duration-300 flex items-center justify-center relative">
+            
+            <!-- FLOATING CONTROLS CONTAINER (Initially Hidden) -->
+            <div id="floatingControls" class="floating-controls-style" style="display: none;">
+                <!-- This will dynamically hold the timer and floating hamburger -->
+            </div>
+
             <p id="initialMessage" class="text-center text-gray-500 text-lg">
                 Paste a YouTube URL in the bar above and click "Watch" to begin your focused session.
             </p>
@@ -124,18 +203,29 @@
 
     <!-- JavaScript for Functionality and Timer -->
     <script>
+        const topbar = document.getElementById('topbar');
+        const mainControls = document.getElementById('mainControls');
+        const menuToggleButtonTop = document.getElementById('menuToggleButtonTop');
+        const timerGroupWrapper = document.getElementById('timerGroupWrapper');
+        const floatingControls = document.getElementById('floatingControls'); // New Floating Container
+        
         const urlInput = document.getElementById('urlInput');
         const loadButton = document.getElementById('loadButton');
         const videoContainer = document.getElementById('videoContainer');
         const timerDisplay = document.getElementById('sessionTimer');
         const timerControlButton = document.getElementById('timerControlButton');
-        // New icon element references
         const pauseIcon = document.getElementById('pauseIcon');
         const playIcon = document.getElementById('playIcon');
 
+        // Create a separate floating hamburger button for the focus mode exit
+        const floatingMenuToggleButton = menuToggleButtonTop.cloneNode(true);
+        floatingMenuToggleButton.id = 'floatingMenuToggleButton'; // Changed ID for uniqueness and CSS targeting
+        floatingMenuToggleButton.title = 'Exit Focus Mode';
+        
         let seconds = 0;
         let timerInterval;
         let isPaused = false;
+        let isFocusMode = false; // Track the current mode
 
         /**
          * Updates the timer display in HH:MM:SS format.
@@ -169,41 +259,88 @@
             isPaused = !isPaused;
             if (isPaused) {
                 // Timer is PAUSED (Button color matches Watch button: Primary Blue/Indigo)
-                
-                // 1. Show Play Icon, Hide Pause Icon
                 playIcon.classList.remove('hidden');
                 pauseIcon.classList.add('hidden');
-
-                // 2. Change to Watch button's color (Primary Blue/Indigo)
                 timerControlButton.classList.remove('bg-gray-600', 'hover:bg-gray-500');
                 timerControlButton.classList.add('bg-primary', 'hover:bg-indigo-700');
             } else {
                 // Timer is RUNNING (Minimal Gray button - blends in)
-                
-                // 1. Show Pause Icon, Hide Play Icon
                 playIcon.classList.add('hidden');
                 pauseIcon.classList.remove('hidden');
-
-                // 2. Change back to Pause (Minimal Gray button)
                 timerControlButton.classList.remove('bg-primary', 'hover:bg-indigo-700');
                 timerControlButton.classList.add('bg-gray-600', 'hover:bg-gray-500');
+            }
+        }
+
+        /**
+         * Toggles the internal visibility of the floating controls (sub-focus mode).
+         * Triggered by clicking the timer group itself.
+         */
+        function toggleFloatingSubMenu() {
+            // This function is only called when Focus Mode is active
+            floatingControls.classList.toggle('hidden-sub-menu');
+        }
+
+
+        /**
+         * Toggles the visibility of the top bar (Main Focus Mode).
+         * Triggered by the hamburger buttons.
+         */
+        function toggleFocusMode() {
+            isFocusMode = !isFocusMode;
+
+            if (isFocusMode) {
+                // ENTER FOCUS MODE (Hide controls, move timer/hamburger)
+                
+                // 1. Hide Topbar and adjust body padding
+                topbar.classList.add('hidden-topbar');
+                document.body.classList.add('focus-mode-active');
+                
+                // 2. Prepare floating controls and move content
+                floatingControls.style.display = 'flex'; // Make the flex container visible
+                floatingControls.appendChild(timerGroupWrapper);
+                floatingControls.appendChild(floatingMenuToggleButton);
+                
+                // Reset slide state and trigger smooth slide-in
+                floatingControls.classList.add('hiding-floating'); 
+                setTimeout(() => {
+                    floatingControls.classList.remove('hiding-floating');
+                }, 10);
+                
+            } else {
+                // EXIT FOCUS MODE (Show controls, restore timer/hamburger)
+                
+                // 1. Smoothly slide the floating controls out of view
+                floatingControls.classList.add('hiding-floating');
+                
+                // 2. After the transition completes (0.3s), restore the topbar
+                setTimeout(() => {
+                    // Hide floating controls container completely
+                    floatingControls.style.display = 'none';
+
+                    // Restore Topbar and padding
+                    topbar.classList.remove('hidden-topbar');
+                    document.body.classList.remove('focus-mode-active');
+                    
+                    // Reset sub-menu visibility
+                    floatingControls.classList.remove('hidden-sub-menu');
+
+                    // Move Timer back to Topbar
+                    topbar.insertBefore(timerGroupWrapper, menuToggleButtonTop);
+                }, 300);
             }
         }
 
 
         /**
          * Extracts the YouTube Video ID from various URL formats, ignoring extra parameters.
-         * The current regex is designed to only capture the 11-character video ID 
-         * regardless of subsequent parameters like &t or &list.
          */
         function getVideoId(url) {
             let videoId = null;
             
-            // Regex for standard watch URL: captures the 11 characters after 'v='
             const watchRegex = /[?&]v=([a-zA-Z0-9_-]{11})/;
             const matchWatch = url.match(watchRegex);
 
-            // Regex for short youtu.be URL: captures the 11 characters after 'youtu.be/'
             const shortRegex = /(?:youtu\.be\/)([a-zA-Z0-9_-]{11})/;
             const matchShort = url.match(shortRegex);
 
@@ -233,8 +370,6 @@
                 return;
             }
 
-            // Construct the embed URL
-            // rel=0 prevents related videos, modestbranding=1 minimizes branding.
             const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
 
             // Remove the flex centering classes for the initial message and replace with the video content
@@ -254,17 +389,29 @@
                 </div>
             `;
             
-            // Clear the input field for a clean look
             urlInput.value = '';
         }
 
         // --- Event Listeners and Initialization ---
 
-        // Load button click handler
         loadButton.addEventListener('click', loadVideo);
         
-        // Timer control button click handler
-        timerControlButton.addEventListener('click', toggleTimer);
+        // Prevent timer control button click from triggering the parent's slide toggle
+        timerControlButton.addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            toggleTimer();
+        });
+        
+        // Attaches the Sub-Menu Toggle to the Timer Group Wrapper (Clicking anywhere in the timer area)
+        timerGroupWrapper.addEventListener('click', toggleFloatingSubMenu);
+
+
+        // Attach main toggle to the TOP hamburger button
+        menuToggleButtonTop.addEventListener('click', toggleFocusMode);
+        
+        // Attach main toggle to the FLOATING hamburger button (for exiting focus mode)
+        floatingMenuToggleButton.addEventListener('click', toggleFocusMode);
+
 
         // Allow pressing Enter key to load the video
         urlInput.addEventListener('keypress', function(event) {
@@ -273,9 +420,7 @@
             }
         });
 
-        // Start the session timer immediately when the page loads
         startTimer();
-
     </script>
 </body>
 </html>
