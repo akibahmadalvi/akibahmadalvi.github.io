@@ -46,6 +46,7 @@
             font-family: 'Inter', sans-serif;
             padding-top: 60px; /* Space for the 60px height fixed header */
             transition: padding-top 0.3s ease-in-out;
+            overflow-x: hidden; /* Ensures no horizontal scroll */
         }
         body.focus-mode-active {
             padding-top: 0; /* Remove padding when header is hidden */
@@ -180,20 +181,23 @@
         </button>
     </header>
 
-    <!-- Main Content Area: Using full width with padding -->
+    <!-- Main Content Area: Now using mx-auto and max-width to constrain the container reliably -->
     <main class="w-full px-4 md:px-8 py-4 md:py-8">
         
-        <!-- Video Display Container: Added flex classes for centering -->
-        <div id="videoContainer" class="bg-yt-dark rounded-xl shadow-2xl p-4 transition-all duration-300 flex items-center justify-center relative">
-            
-            <!-- FLOATING CONTROLS CONTAINER (Initially Hidden) -->
-            <div id="floatingControls" class="floating-controls-style" style="display: none;">
-                <!-- This will dynamically hold the timer and floating hamburger -->
-            </div>
+        <!-- Inner Container with max-width and center alignment (mx-auto) -->
+        <div class="mx-auto max-w-screen-xl">
+            <!-- Video Display Container: Added flex classes for centering -->
+            <div id="videoContainer" class="bg-yt-dark rounded-xl shadow-2xl p-4 transition-all duration-300 flex items-center justify-center relative">
+                
+                <!-- FLOATING CONTROLS CONTAINER (Initially Hidden) -->
+                <div id="floatingControls" class="floating-controls-style" style="display: none;">
+                    <!-- This will dynamically hold the timer and floating hamburger -->
+                </div>
 
-            <p id="initialMessage" class="text-center text-gray-500 text-lg">
-                Paste a YouTube URL in the bar above and click "Watch" to begin your focused session.
-            </p>
+                <p id="initialMessage" class="text-center text-gray-500 text-lg">
+                    Paste a YouTube URL in the bar above and click "Watch" to begin your focused session.
+                </p>
+            </div>
         </div>
         
         <p class="mt-6 text-sm text-center text-gray-500">
