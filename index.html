@@ -39,7 +39,7 @@
             position: fixed;
             top: 0;
             width: 100%;
-            min-height: 70px;
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -48,16 +48,17 @@
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border);
-            z-index: 1000;
+            z-index: 1100; /* Higher than overlay to stay sharp */
         }
 
         .logo {
             font-weight: 800;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             letter-spacing: -0.5px;
             color: var(--text-primary);
             text-decoration: none;
             white-space: nowrap;
+            z-index: 1200;
         }
 
         .nav-links {
@@ -75,6 +76,87 @@
 
         .nav-links a:hover {
             color: var(--accent);
+        }
+
+        /* Hamburger Menu Button */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 1200;
+            padding: 10px;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 2px;
+            background-color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        /* Mobile Sidebar */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 70%;
+                height: 100vh;
+                background: var(--card-bg);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 3rem;
+                transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                border-left: 1px solid var(--border);
+                box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+                z-index: 1150; /* Between nav and toggle */
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .nav-links a {
+                font-size: 1.2rem;
+            }
+
+            /* Hamburger Animation */
+            .menu-toggle.active span:nth-child(1) {
+                transform: translateY(8px) rotate(45deg);
+            }
+            .menu-toggle.active span:nth-child(2) {
+                opacity: 0;
+            }
+            .menu-toggle.active span:nth-child(3) {
+                transform: translateY(-8px) rotate(-45deg);
+            }
+
+            /* Overlay */
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.4); /* Darkened slightly */
+                backdrop-filter: blur(5px);
+                -webkit-backdrop-filter: blur(5px);
+                z-index: 1050; /* Lower than nav to avoid blurring header */
+            }
+
+            .overlay.active {
+                display: block;
+            }
         }
 
         /* --- Hero Section --- */
@@ -176,67 +258,20 @@
             color: var(--text-secondary);
             font-size: 0.9rem;
         }
-
-        /* --- Mobile Responsive Tweak --- */
-        @media (max-width: 768px) {
-            nav {
-                flex-direction: column;
-                padding: 15px 0;
-                height: auto;
-            }
-
-            .logo {
-                margin-bottom: 12px;
-            }
-
-            .nav-links {
-                gap: 1.2rem;
-                width: 100%;
-                justify-content: center;
-                padding-bottom: 5px;
-            }
-
-            .nav-links a {
-                font-size: 0.8rem;
-            }
-
-            section {
-                padding: 60px 6%;
-            }
-
-            .content-card {
-                padding: 24px;
-            }
-
-            .hero {
-                padding-top: 120px;
-            }
-
-            .section-title {
-                text-align: center;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                letter-spacing: -1px;
-            }
-            
-            .nav-links {
-                gap: 0.8rem;
-            }
-            
-            .nav-links a {
-                font-size: 0.75rem;
-            }
-        }
     </style>
 </head>
 <body>
 
+    <div class="overlay" id="overlay"></div>
+
     <nav>
         <a href="#home" class="logo">Portfolio</a>
-        <div class="nav-links">
+        <button class="menu-toggle" id="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <div class="nav-links" id="nav-links">
             <a href="#home">Home</a>
             <a href="#projects">Projects</a>
             <a href="#about">About</a>
@@ -259,7 +294,6 @@
         <section id="projects">
             <h2 class="section-title">Latest Work</h2>
             <div id="project-container">
-                <!-- This will be populated by the JS array later -->
                 <div class="empty-state">
                     <p>Ready to index your projects. Let's add the JavaScript logic when you're ready!</p>
                 </div>
@@ -294,7 +328,35 @@
     </footer>
 
     <script>
-        // Placeholder for the project indexing logic
+        const menuToggle = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('nav-links');
+        const overlay = document.getElementById('overlay');
+        const body = document.body;
+
+        function toggleMenu() {
+            menuToggle.classList.toggle('active');
+            navLinks.classList.toggle('active');
+            overlay.classList.toggle('active');
+            // Prevent scrolling when menu is open
+            if(navLinks.classList.contains('active')) {
+                body.style.overflow = 'hidden';
+            } else {
+                body.style.overflow = 'auto';
+            }
+        }
+
+        menuToggle.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+
+        // Close menu when a link is clicked
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                if(navLinks.classList.contains('active')) {
+                    toggleMenu();
+                }
+            });
+        });
+
         console.log("Vibe coding initialized for Akib Ahmad Alvi.");
     </script>
 </body>
