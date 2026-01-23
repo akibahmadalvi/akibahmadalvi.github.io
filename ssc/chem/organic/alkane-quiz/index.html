@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carbon Nomenclature Quiz - Ordered Randomization</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Alkane Quiz - Organic Chemistry</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
@@ -12,63 +12,97 @@
             font-family: 'Inter', sans-serif;
             background-color: #0f172a; /* Slate 900 */
             color: #f1f5f9;
+            overscroll-behavior-y: contain; 
         }
 
         .cherry-red {
-            background-color: #D2122E !important; /* Cherry Red */
+            background-color: #D2122E !important; 
             border-color: #D2122E !important;
             color: white !important;
         }
 
         .success-green {
-            background-color: #22c55e !important; /* Green 500 */
+            background-color: #22c55e !important; 
             border-color: #22c55e !important;
             color: white !important;
         }
 
         .option-btn {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-tap-highlight-color: transparent;
         }
 
         .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .select-none {
+            user-select: none;
+            -webkit-user-select: none;
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-[100dvh] flex items-center justify-center p-4">
 
-    <div id="app" class="w-full max-w-md glass-card rounded-3xl shadow-2xl p-6 md:p-8">
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-10">
-            <div>
-                <h1 class="text-2xl font-bold text-white tracking-tight">ChemQuiz</h1>
-                <p id="progress-text" class="text-xs text-slate-400 uppercase tracking-widest font-semibold">Question 1/24</p>
+    <!-- Welcome / Start Screen -->
+    <div id="start-screen" class="w-full max-w-md glass-card rounded-[2rem] shadow-2xl p-6 md:p-10 text-center">
+        <div class="mb-6 inline-flex p-4 bg-blue-500/10 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 md:h-12 md:w-12 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+            </svg>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-bold text-white mb-2">Hello! 👋</h1>
+        <p class="text-slate-300 mb-8 leading-relaxed text-sm md:text-base">
+            Ready to test your knowledge of <b>Organic Chemistry</b>? Let's master the 1 to 12 Carbon Alkanes.
+        </p>
+        <div class="text-left space-y-4 mb-8 bg-slate-800/40 p-5 rounded-2xl border border-slate-700/50">
+            <div class="flex items-start text-sm text-slate-400">
+                <span class="mt-0.5 w-5 h-5 flex-shrink-0 flex items-center justify-center bg-blue-500/20 text-blue-400 rounded-full mr-3 text-[10px] font-bold">1</span>
+                <span>24 Randomized, non-repeating questions.</span>
             </div>
-            <div class="text-sm font-bold px-4 py-2 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl">
+            <div class="flex items-start text-sm text-slate-400">
+                <span class="mt-0.5 w-5 h-5 flex-shrink-0 flex items-center justify-center bg-blue-500/20 text-blue-400 rounded-full mr-3 text-[10px] font-bold">2</span>
+                <span>Tests names vs counts and vice versa.</span>
+            </div>
+        </div>
+        <button id="begin-quiz-btn" class="select-none w-full py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-500 active:scale-[0.96] transition-all shadow-xl shadow-blue-900/40">
+            Start Alkane Quiz
+        </button>
+    </div>
+
+    <!-- Quiz Screen (Hidden by default) -->
+    <div id="quiz-screen" class="w-full max-w-md glass-card rounded-[2rem] shadow-2xl p-5 md:p-8 hidden">
+        <div class="flex justify-between items-center mb-6 md:mb-10">
+            <div class="min-w-0">
+                <h1 class="text-xl md:text-2xl font-bold text-white tracking-tight truncate">ChemQuiz</h1>
+                <p id="progress-text" class="text-[10px] md:text-xs text-slate-400 uppercase tracking-widest font-semibold">Question 1/24</p>
+            </div>
+            <div class="flex-shrink-0 text-xs md:text-sm font-bold px-3 py-1.5 md:px-4 md:py-2 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl">
                 Score: <span id="score">0</span>
             </div>
         </div>
 
-        <!-- Question Section -->
         <div id="quiz-container">
-            <div class="mb-8">
-                <p id="question-text" class="text-xl font-medium text-slate-100 leading-relaxed min-h-[80px]">
-                    Preparing your deck...
+            <div class="mb-6 md:mb-8">
+                <p id="question-text" class="text-lg md:text-xl font-medium text-slate-100 leading-relaxed min-h-[70px] flex items-center">
+                    Loading question...
                 </p>
             </div>
 
-            <!-- Options -->
-            <div id="options-grid" class="grid grid-cols-1 gap-4">
-                <!-- Options will be injected here -->
+            <div id="options-grid" class="grid grid-cols-1 gap-3 md:gap-4">
+                <!-- Options injected here -->
             </div>
 
-            <!-- Feedback Message -->
-            <div id="feedback" class="mt-8 p-4 rounded-2xl text-center font-bold text-sm hidden"></div>
+            <div id="feedback" class="mt-6 md:mt-8 p-4 rounded-2xl text-center font-bold text-xs md:text-sm hidden"></div>
 
-            <!-- Control Button -->
-            <button id="next-btn" class="hidden w-full mt-8 py-4 bg-white text-slate-900 rounded-2xl font-bold hover:bg-slate-200 active:scale-[0.98] transition-all shadow-xl">
+            <button id="next-btn" class="select-none hidden w-full mt-6 md:mt-8 py-4 bg-white text-slate-900 rounded-2xl font-bold hover:bg-slate-100 active:scale-[0.96] transition-all shadow-xl">
                 Continue →
             </button>
         </div>
@@ -93,9 +127,11 @@
         let questionDeck = [];
         let currentQuestion = null;
         let score = 0;
-        let totalAnswered = 0;
         let hasAnswered = false;
 
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const beginBtn = document.getElementById('begin-quiz-btn');
         const questionText = document.getElementById('question-text');
         const optionsGrid = document.getElementById('options-grid');
         const nextBtn = document.getElementById('next-btn');
@@ -103,17 +139,12 @@
         const feedback = document.getElementById('feedback');
         const progressText = document.getElementById('progress-text');
 
-        // Create a pool of 24 unique questions (12 types of A, 12 types of B)
         function createDeck() {
             let deck = [];
             carbonData.forEach((item, index) => {
-                // Type 0: Name to Count
-                deck.push({ carbonIndex: index, type: 0 });
-                // Type 1: Count to Name
-                deck.push({ carbonIndex: index, type: 1 });
+                deck.push({ carbonIndex: index, type: 0 }); 
+                deck.push({ carbonIndex: index, type: 1 }); 
             });
-            
-            // Shuffle the deck using Fisher-Yates algorithm
             for (let i = deck.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [deck[i], deck[j]] = [deck[j], deck[i]];
@@ -121,13 +152,14 @@
             return deck;
         }
 
-        function initQuiz() {
+        function startQuiz() {
+            startScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
             questionDeck = createDeck();
             generateQuestion();
         }
 
         function generateQuestion() {
-            // If deck is empty, start a new cycle
             if (questionDeck.length === 0) {
                 questionDeck = createDeck();
             }
@@ -136,7 +168,6 @@
             nextBtn.classList.add('hidden');
             feedback.classList.add('hidden');
             
-            // Draw the next question from our unique shuffled pool
             const questionSpec = questionDeck.pop();
             const target = carbonData[questionSpec.carbonIndex];
             const type = questionSpec.type;
@@ -146,8 +177,8 @@
             let options = [];
 
             if (type === 0) {
-                // Name to Carbon Count
-                questionHtml = `<span class="text-blue-400 font-bold">${target.name}</span> has —`;
+                // Fixed: Added &nbsp; to ensure space is visible after the bold name
+                questionHtml = `<span class="text-blue-400 font-bold">${target.name}</span>&nbsp;has —`;
                 correctAnswer = `${target.carbons} Carbon${target.carbons > 1 ? 's' : ''}`;
                 
                 const distractors = carbonData
@@ -158,8 +189,8 @@
                 
                 options = [correctAnswer, ...distractors];
             } else {
-                // Carbon Count to Name
-                questionHtml = `<span class="text-blue-400 font-bold">${target.carbons} carbon</span> Alkane is —`;
+                // Fixed: Added &nbsp; to ensure space is visible after the bold count
+                questionHtml = `<span class="text-blue-400 font-bold">${target.carbons} carbon</span>&nbsp;Alkane is —`;
                 correctAnswer = target.name;
                 
                 const distractors = carbonData
@@ -171,12 +202,9 @@
                 options = [correctAnswer, ...distractors];
             }
 
-            // Shuffle option buttons
             options.sort(() => 0.5 - Math.random());
-
             currentQuestion = { correctAnswer };
             
-            // Update Progress Tracking UI
             const currentCountInCycle = 24 - questionDeck.length;
             progressText.innerText = `Question ${currentCountInCycle}/24`;
 
@@ -186,10 +214,9 @@
         function renderUI(html, options) {
             questionText.innerHTML = html;
             optionsGrid.innerHTML = '';
-
             options.forEach(option => {
                 const btn = document.createElement('button');
-                btn.className = "option-btn w-full p-4 text-left border border-slate-700 rounded-2xl bg-slate-800/50 hover:bg-slate-700/50 hover:border-slate-500 font-medium text-slate-200 shadow-sm";
+                btn.className = "select-none option-btn w-full p-4 text-left border border-slate-700 rounded-2xl bg-slate-800/50 hover:bg-slate-700/50 font-medium text-slate-200 shadow-sm active:scale-[0.98] text-sm md:text-base";
                 btn.innerText = option;
                 btn.onclick = () => handleAnswer(btn);
                 optionsGrid.appendChild(btn);
@@ -211,8 +238,6 @@
                 showFeedback("Correct! You nailed it.", "bg-green-500/10 text-green-400 border border-green-500/20");
             } else {
                 selectedBtn.classList.add('cherry-red');
-                
-                // Reveal the correct button
                 Array.from(optionsGrid.children).forEach(btn => {
                     if (btn.innerText.trim() === correctValue) {
                         btn.classList.add('border-green-500', 'text-green-400', 'bg-green-500/5');
@@ -220,19 +245,17 @@
                 });
                 showFeedback(`Oops! The correct answer was ${correctValue}.`, "bg-red-500/10 text-red-400 border border-red-500/20");
             }
-
             nextBtn.classList.remove('hidden');
         }
 
         function showFeedback(text, classes) {
             feedback.innerText = text;
-            feedback.className = `mt-8 p-4 rounded-2xl text-center font-bold text-sm ${classes}`;
+            feedback.className = `mt-6 md:mt-8 p-4 rounded-2xl text-center font-bold text-xs md:text-sm ${classes}`;
             feedback.classList.remove('hidden');
         }
 
+        beginBtn.onclick = startQuiz;
         nextBtn.onclick = generateQuestion;
-
-        window.onload = initQuiz;
     </script>
 </body>
 </html>
