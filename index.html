@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio</title>
+    <title>Portfolio | Vibe Coding</title>
     <!-- Inter Font for a modern look -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -15,7 +15,7 @@
             --accent: #6366f1;
             --accent-glow: rgba(99, 102, 241, 0.15);
             --border: #27272a;
-            --nav-glass: rgba(10, 10, 12, 0.8);
+            --nav-glass: rgba(10, 10, 12, 0.9);
         }
 
         * {
@@ -31,6 +31,7 @@
             color: var(--text-primary);
             line-height: 1.6;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* --- Navigation --- */
@@ -38,35 +39,36 @@
             position: fixed;
             top: 0;
             width: 100%;
-            height: 70px;
+            min-height: 70px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 10%;
             background: var(--nav-glass);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border);
             z-index: 1000;
         }
 
         .logo {
             font-weight: 800;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             letter-spacing: -0.5px;
             color: var(--text-primary);
             text-decoration: none;
+            white-space: nowrap;
         }
 
         .nav-links {
             display: flex;
-            gap: 2.5rem;
+            gap: 2rem;
         }
 
         .nav-links a {
             text-decoration: none;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 500;
             transition: all 0.2s ease;
         }
@@ -83,8 +85,7 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 0 20px;
-            padding-top: 70px;
+            padding: 100px 20px 60px;
         }
 
         .badge {
@@ -92,7 +93,7 @@
             color: var(--accent);
             padding: 6px 16px;
             border-radius: 100px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             border: 1px solid rgba(99, 102, 241, 0.3);
             margin-bottom: 24px;
@@ -100,11 +101,11 @@
         }
 
         h1 {
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-size: clamp(2.2rem, 10vw, 4.5rem);
             font-weight: 800;
             letter-spacing: -2px;
             line-height: 1.1;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         h1 span {
@@ -114,40 +115,42 @@
         }
 
         .hero p {
-            max-width: 600px;
+            max-width: 540px;
             color: var(--text-secondary);
-            font-size: 1.1rem;
-            margin-bottom: 40px;
+            font-size: 1.05rem;
+            margin-bottom: 32px;
+            padding: 0 10px;
         }
 
         /* --- Sections --- */
         section {
-            padding: 100px 10%;
-            min-height: 60vh;
+            padding: 80px 10%;
+            min-height: auto;
         }
 
         .section-title {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.5px;
         }
 
         .content-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
-            padding: 40px;
-            border-radius: 24px;
+            padding: 32px;
+            border-radius: 20px;
             max-width: 800px;
             margin: 0 auto;
         }
 
         /* --- Footer --- */
         footer {
-            padding: 50px 10%;
+            padding: 40px 10%;
             border-top: 1px solid var(--border);
             text-align: center;
             color: var(--text-secondary);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         /* --- Utility --- */
@@ -156,34 +159,83 @@
             text-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
         }
 
-        /* --- Projects Grid Placeholder --- */
+        /* --- Projects Grid --- */
         #project-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
-            margin-top: 30px;
+            margin-top: 20px;
         }
 
         .empty-state {
             grid-column: 1 / -1;
-            padding: 60px;
+            padding: 50px 20px;
             border: 2px dashed var(--border);
             border-radius: 20px;
             text-align: center;
             color: var(--text-secondary);
+            font-size: 0.9rem;
         }
 
+        /* --- Mobile Responsive Tweak --- */
         @media (max-width: 768px) {
-            nav { padding: 0 5%; }
-            .nav-links { display: none; } /* Simplified for mobile */
-            section { padding: 80px 5%; }
+            nav {
+                flex-direction: column;
+                padding: 15px 0;
+                height: auto;
+            }
+
+            .logo {
+                margin-bottom: 12px;
+            }
+
+            .nav-links {
+                gap: 1.2rem;
+                width: 100%;
+                justify-content: center;
+                padding-bottom: 5px;
+            }
+
+            .nav-links a {
+                font-size: 0.8rem;
+            }
+
+            section {
+                padding: 60px 6%;
+            }
+
+            .content-card {
+                padding: 24px;
+            }
+
+            .hero {
+                padding-top: 120px;
+            }
+
+            .section-title {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                letter-spacing: -1px;
+            }
+            
+            .nav-links {
+                gap: 0.8rem;
+            }
+            
+            .nav-links a {
+                font-size: 0.75rem;
+            }
         }
     </style>
 </head>
 <body>
 
     <nav>
-        <a href="#home" class="logo">Portfolio</a>
+        <a href="#home" class="logo">Akib Ahmad Alvi</a>
         <div class="nav-links">
             <a href="#home">Home</a>
             <a href="#projects">Projects</a>
@@ -200,7 +252,7 @@
             <p>
                 I specialize in <strong>vibe coding</strong>—the art of using <strong>Gemini Pro</strong> to prototype and build high-quality personal projects with creative intuition.
             </p>
-            <a href="#projects" style="color: var(--accent); text-decoration: none; font-weight: 600; border-bottom: 2px solid var(--accent); padding-bottom: 4px;">View my work &rarr;</a>
+            <a href="#projects" style="color: var(--accent); text-decoration: none; font-weight: 600; border-bottom: 2px solid var(--accent); padding-bottom: 4px; font-size: 0.95rem;">View my work &rarr;</a>
         </section>
 
         <!-- Projects Section -->
@@ -209,7 +261,7 @@
             <div id="project-container">
                 <!-- This will be populated by the JS array later -->
                 <div class="empty-state">
-                    <p>Ready to index your projects. Ask me to help with the JavaScript array when you're ready!</p>
+                    <p>Ready to index your projects. Let's add the JavaScript logic when you're ready!</p>
                 </div>
             </div>
         </section>
@@ -230,20 +282,19 @@
         <!-- Contact Section -->
         <section id="contact" style="text-align: center;">
             <h2 class="section-title">Get in Touch</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 30px;">Want to collaborate or just talk about AI?</p>
-            <a href="mailto:hello@vibecoding.me" class="content-card" style="display: inline-block; text-decoration: none; padding: 20px 40px; color: var(--text-primary);">
+            <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 0.95rem;">Want to collaborate or just talk about AI?</p>
+            <a href="mailto:hello@vibecoding.me" class="content-card" style="display: block; text-decoration: none; padding: 20px; color: var(--text-primary); font-weight: 600;">
                 Reach out to Akib
             </a>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2026 Akib Ahmad Alvi. Crafted with Gemini Pro.</p>
+        <p>&copy; 2026 Akib Ahmad Alvi. <br>Crafted with Gemini Pro.</p>
     </footer>
 
     <script>
         // Placeholder for the project indexing logic
-        // We will build this out with an array when you're ready!
         console.log("Vibe coding initialized for Akib Ahmad Alvi.");
     </script>
 </body>
